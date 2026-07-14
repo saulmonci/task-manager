@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, Typography, Tag, Avatar, Space } from 'antd';
-import { UserOutlined, ArrowUpOutlined, ArrowDownOutlined, MinusOutlined } from '@ant-design/icons';
+import { Card, Typography, Tag, Avatar, Space, Popconfirm, Button } from 'antd';
+import { UserOutlined, ArrowUpOutlined, ArrowDownOutlined, MinusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Draggable } from '@hello-pangea/dnd';
 import type { Task } from '../types';
 
@@ -10,6 +10,7 @@ interface TaskCardProps {
   task: Task;
   index: number;
   onClick: (task: Task) => void;
+  onDelete?: (taskId: number) => void;
 }
 
 const getPriorityIcon = (priority: string) => {
@@ -25,7 +26,7 @@ const getPriorityIcon = (priority: string) => {
   }
 };
 
-export const TaskCard: React.FC<TaskCardProps> = ({ task, index, onClick }) => {
+export const TaskCard: React.FC<TaskCardProps> = ({ task, index, onClick, onDelete }) => {
   return (
     <Draggable draggableId={task.id.toString()} index={index}>
       {(provided, snapshot) => (
@@ -50,7 +51,20 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, index, onClick }) => {
             hoverable
           >
             <Space direction="vertical" style={{ width: '100%' }} size={4}>
-              <Text strong>{task.title}</Text>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <Text strong>{task.title}</Text>
+                {onDelete && (
+                  <Popconfirm
+                    title="¿Eliminar esta tarea?"
+                    onConfirm={(e) => { e?.stopPropagation(); onDelete(task.id); }}
+                    onCancel={(e) => e?.stopPropagation()}
+                    okText="Sí"
+                    cancelText="No"
+                  >
+                    <Button type="text" danger icon={<DeleteOutlined />} size="small" onClick={(e) => e.stopPropagation()} style={{ padding: 0, height: 'auto' }} />
+                  </Popconfirm>
+                )}
+              </div>
 
               {task.description && (
                 <Text type="secondary" style={{ fontSize: 12 }}>

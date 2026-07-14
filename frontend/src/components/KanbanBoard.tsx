@@ -3,7 +3,7 @@ import { Typography, Button, Modal, Form, Input, Select, message, Spin, Layout, 
 import { PlusOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { TaskCard } from './TaskCard';
 import type { Task, BoardData, Project, User } from '../types';
-import { getTasks, createTask, updateTask, getProjects, getProjectUsers } from '../api';
+import { getTasks, createTask, updateTask, getProjects, getProjectUsers, deleteTask } from '../api';
 import { useEffect, useState } from 'react';
 import { AdminPanel } from './AdminPanel';
 
@@ -184,6 +184,17 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
     }
   };
 
+  const handleDeleteTask = async (taskId: number) => {
+    if (selectedProjectId === null) return;
+    try {
+      await deleteTask(taskId);
+      message.success('Tarea eliminada.');
+      loadProjectData(selectedProjectId);
+    } catch (error) {
+      message.error('Error al eliminar la tarea.');
+    }
+  };
+
   const openModal = (task?: Task) => {
     if (task) {
       setEditingTask(task);
@@ -284,7 +295,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
                           }}
                         >
                           {tasks.map((task, index) => (
-                            task && <TaskCard key={task.id} task={task} index={index} onClick={openModal} />
+                            task && <TaskCard key={task.id} task={task} index={index} onClick={openModal} onDelete={handleDeleteTask} />
                           ))}
                           {provided.placeholder}
                         </div>
