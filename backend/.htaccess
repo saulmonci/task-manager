@@ -1,0 +1,19 @@
+RewriteEngine On
+
+# 1. Route API requests to index.php
+# E.g., /api/tasks -> index.php/tasks
+RewriteRule ^api/(.*)$ index.php/$1 [QSA,L]
+
+# 2. If it's a request for a static file that exists in the public folder, serve it
+RewriteCond %{DOCUMENT_ROOT}/public/$1 -f
+RewriteRule ^(.*)$ public/$1 [L]
+
+# 3. Explicitly rewrite the root request (empty path) to public/index.html
+RewriteRule ^$ public/index.html [L]
+
+# 4. Fallback for React routing
+# If the request is not a real file, and not an API path, serve index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule ^(.*)$ public/index.html [L]
+
