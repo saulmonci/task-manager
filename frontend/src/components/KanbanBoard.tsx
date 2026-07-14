@@ -200,7 +200,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
       <Header style={{ background: '#fff', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px #f0f1f2', zIndex: 1 }}>
         <Space size="large">
           <Title level={3} style={{ margin: 0, color: '#0052cc' }}>Task Manager</Title>
-          {projects.length > 0 && (
+          {projects.length > 1 && (
             <Select
               style={{ width: 220 }}
               placeholder="Seleccionar Proyecto"
@@ -211,6 +211,11 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
                 <Select.Option key={proj.id} value={proj.id}>{proj.name}</Select.Option>
               ))}
             </Select>
+          )}
+          {projects.length === 1 && (
+            <Text style={{ fontSize: '16px', color: '#555', marginLeft: 8 }}>
+              {projects[0].name}
+            </Text>
           )}
         </Space>
         
