@@ -1,8 +1,8 @@
 <?php
-$host = getenv('DB_HOST') ?: 'db';
-$db   = getenv('DB_NAME') ?: 'task_manager';
-$user = getenv('DB_USER') ?: 'root';
-$pass = getenv('DB_PASS') ?: 'root';
+$host = getenv('DB_HOST') ?: 'localhost';
+$db   = getenv('DB_NAME') ?: 'u235251407_tasks';
+$user = getenv('DB_USER') ?: 'u235251407_tasks';
+$pass = getenv('DB_PASS') ?: 'Ynn4C4WVjkYP@Km';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -78,7 +78,7 @@ $stmtProj = $pdo->query("SELECT id FROM projects LIMIT 1");
 if (!$stmtProj->fetch()) {
     $pdo->exec("INSERT INTO projects (name, description) VALUES ('Proyecto Alpha', 'Proyecto por defecto para gestionar tareas')");
     $projectId = $pdo->lastInsertId();
-    
+
     // Assign admin to the default project
     $stmtAdmin = $pdo->prepare("SELECT id FROM users WHERE username = ?");
     $stmtAdmin->execute(['admin']);
@@ -86,10 +86,9 @@ if (!$stmtProj->fetch()) {
     if ($adminUser) {
         $stmtAssign = $pdo->prepare("INSERT INTO project_users (project_id, user_id) VALUES (?, ?)");
         $stmtAssign->execute([$projectId, $adminUser['id']]);
-        
+
         // Update any existing tasks to belong to this default project
         $stmtUpdateTasks = $pdo->prepare("UPDATE tasks SET project_id = ? WHERE project_id IS NULL");
         $stmtUpdateTasks->execute([$projectId]);
     }
 }
-
