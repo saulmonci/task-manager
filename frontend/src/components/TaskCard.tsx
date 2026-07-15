@@ -4,7 +4,7 @@ import { UserOutlined, ArrowUpOutlined, ArrowDownOutlined, MinusOutlined, Delete
 import { Draggable } from '@hello-pangea/dnd';
 import type { Task } from '../types';
 
-const { Text } = Typography;
+const { Text, Paragraph } = Typography;
 
 interface TaskCardProps {
   task: Task;
@@ -67,9 +67,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, index, onClick, onDele
               </div>
 
               {task.description && (
-                <Text type="secondary" style={{ fontSize: 12 }}>
+                <Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 0 }} ellipsis={{ rows: 3, tooltip: task.description }}>
                   {task.description}
-                </Text>
+                </Paragraph>
               )}
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>

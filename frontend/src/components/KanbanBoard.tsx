@@ -207,10 +207,10 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
   };
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#f0f2f5' }}>
-      <Header style={{ background: '#fff', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px #f0f1f2', zIndex: 1 }}>
-        <Space size="large">
-          <Title level={3} style={{ margin: 0, color: '#0052cc' }}>Task Manager</Title>
+    <Layout style={{ minHeight: '100vh', background: '#f0f2f5', overflowX: 'hidden', width: '100%' }}>
+      <Header style={{ background: '#fff', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px #f0f1f2', zIndex: 1, height: 'auto', flexWrap: 'wrap', gap: '16px' }}>
+        <Space size="large" style={{ flexWrap: 'wrap' }}>
+          <Title level={3} style={{ margin: 0, color: '#0052cc', whiteSpace: 'nowrap' }}>Task Manager</Title>
           {projects.length > 1 && (
             <Select
               style={{ width: 220 }}
@@ -230,7 +230,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
           )}
         </Space>
         
-        <Space size="middle">
+        <Space size="middle" style={{ flexWrap: 'wrap' }}>
           <Space>
             <Avatar style={{ backgroundColor: '#0052cc' }} icon={<UserOutlined />} />
             <Text strong>{currentUser.username}</Text>
@@ -254,7 +254,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
         </Space>
       </Header>
       
-      <Content style={{ padding: '24px', overflowX: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <Content style={{ padding: '16px 24px', overflowX: 'auto', display: 'flex', flexDirection: 'column', width: '100%' }}>
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1 }}><Spin size="large" /></div>
         ) : projects.length === 0 ? (
@@ -322,7 +322,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
             <Input />
           </Form.Item>
           <Form.Item name="description" label="Descripción">
-            <Input.TextArea rows={4} />
+            <Input.TextArea autoSize={{ minRows: 4, maxRows: 12 }} />
           </Form.Item>
           <Form.Item name="priority" label="Prioridad" initialValue="Medium">
             <Select>
