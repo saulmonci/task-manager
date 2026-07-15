@@ -8,6 +8,7 @@ export interface Task {
   labels: string;
   created_at: string;
   project_id: number;
+  is_archived?: boolean | number;
 }
 
 export interface User {

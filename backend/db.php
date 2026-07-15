@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS tasks (
     priority VARCHAR(50) DEFAULT 'Medium',
     assignee VARCHAR(100) DEFAULT NULL,
     labels VARCHAR(255) DEFAULT NULL,
+    project_id INT DEFAULT NULL,
+    is_archived TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ";
@@ -62,6 +64,14 @@ try {
 } catch (\PDOException $e) {
     // Column doesn't exist, add it
     $pdo->exec("ALTER TABLE tasks ADD COLUMN project_id INT DEFAULT NULL");
+}
+
+// Alter tasks table if is_archived doesn't exist
+try {
+    $pdo->query("SELECT is_archived FROM tasks LIMIT 1");
+} catch (\PDOException $e) {
+    // Column doesn't exist, add it
+    $pdo->exec("ALTER TABLE tasks ADD COLUMN is_archived TINYINT(1) DEFAULT 0");
 }
 
 // Seed admin user

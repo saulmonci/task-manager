@@ -66,8 +66,8 @@ export const assignProjectUsers = async (projectId: number, userIds: number[]): 
 };
 
 // Tasks API (Requires project_id filtering)
-export const getTasks = async (projectId: number): Promise<Task[]> => {
-  const response = await axios.get(`${BASE_URL}/tasks`, { params: { project_id: projectId } });
+export const getTasks = async (projectId: number, archived: boolean = false): Promise<Task[]> => {
+  const response = await axios.get(`${BASE_URL}/tasks`, { params: { project_id: projectId, archived: archived ? 1 : 0 } });
   return response.data;
 };
 

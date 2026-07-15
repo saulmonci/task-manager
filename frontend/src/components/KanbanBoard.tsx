@@ -1,7 +1,8 @@
 import { DragDropContext, Droppable, type DropResult } from '@hello-pangea/dnd';
 import { Typography, Button, Modal, Form, Input, Select, message, Spin, Layout, Space, Avatar, Empty } from 'antd';
-import { PlusOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { PlusOutlined, LogoutOutlined, SettingOutlined, UserOutlined, InboxOutlined } from '@ant-design/icons';
 import { TaskCard } from './TaskCard';
+import { ArchivePanel } from './ArchivePanel';
 import type { Task, BoardData, Project, User } from '../types';
 import { getTasks, createTask, updateTask, getProjects, getProjectUsers, deleteTask } from '../api';
 import { useEffect, useState } from 'react';
@@ -39,6 +40,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
   
   // Admin Panel modal state
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
+  const [isArchivePanelOpen, setIsArchivePanelOpen] = useState(false);
   
   const [form] = Form.useForm();
 
@@ -195,6 +197,17 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
     }
   };
 
+  const handleArchiveTask = async (taskId: number) => {
+    if (selectedProjectId === null) return;
+    try {
+      await updateTask(taskId, { is_archived: 1 });
+      message.success('Tarea archivada.');
+      loadProjectData(selectedProjectId);
+    } catch (error) {
+      message.error('Error al archivar la tarea.');
+    }
+  };
+
   const openModal = (task?: Task) => {
     if (task) {
       setEditingTask(task);
@@ -243,9 +256,14 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
           )}
           
           {projects.length > 0 && selectedProjectId !== null && (
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => openModal()} style={{ background: '#0052cc', border: 'none' }}>
-              Nueva Tarea
-            </Button>
+            <>
+              <Button icon={<InboxOutlined />} onClick={() => setIsArchivePanelOpen(true)}>
+                Ver Archivo
+              </Button>
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => openModal()} style={{ background: '#0052cc', border: 'none' }}>
+                Nueva Tarea
+              </Button>
+            </>
           )}
           
           <Button icon={<LogoutOutlined />} onClick={onLogout} danger>
@@ -295,7 +313,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
                           }}
                         >
                           {tasks.map((task, index) => (
-                            task && <TaskCard key={task.id} task={task} index={index} onClick={openModal} onDelete={handleDeleteTask} />
+                            task && <TaskCard key={task.id} task={task} index={index} onClick={openModal} onDelete={handleDeleteTask} onArchive={handleArchiveTask} />
                           ))}
                           {provided.placeholder}
                         </div>
@@ -348,6 +366,13 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ currentUser, onLogout 
         open={isAdminPanelOpen}
         onCancel={() => setIsAdminPanelOpen(false)}
         onRefreshProjects={fetchProjects}
+      />
+
+      <ArchivePanel
+        open={isArchivePanelOpen}
+        onCancel={() => setIsArchivePanelOpen(false)}
+        projectId={selectedProjectId}
+        onRestore={() => { if (selectedProjectId) loadProjectData(selectedProjectId); }}
       />
     </Layout>
   );

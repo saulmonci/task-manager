@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Typography, Tag, Avatar, Space, Popconfirm, Button } from 'antd';
-import { UserOutlined, ArrowUpOutlined, ArrowDownOutlined, MinusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { UserOutlined, ArrowUpOutlined, ArrowDownOutlined, MinusOutlined, DeleteOutlined, InboxOutlined } from '@ant-design/icons';
 import { Draggable } from '@hello-pangea/dnd';
 import type { Task } from '../types';
 
@@ -11,6 +11,7 @@ interface TaskCardProps {
   index: number;
   onClick: (task: Task) => void;
   onDelete?: (taskId: number) => void;
+  onArchive?: (taskId: number) => void;
 }
 
 const getPriorityIcon = (priority: string) => {
@@ -26,7 +27,7 @@ const getPriorityIcon = (priority: string) => {
   }
 };
 
-export const TaskCard: React.FC<TaskCardProps> = ({ task, index, onClick, onDelete }) => {
+export const TaskCard: React.FC<TaskCardProps> = ({ task, index, onClick, onDelete, onArchive }) => {
   return (
     <Draggable draggableId={task.id.toString()} index={index}>
       {(provided, snapshot) => (
@@ -53,17 +54,30 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, index, onClick, onDele
             <Space direction="vertical" style={{ width: '100%' }} size={4}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Text strong>{task.title}</Text>
-                {onDelete && (
-                  <Popconfirm
-                    title="¿Eliminar esta tarea?"
-                    onConfirm={(e) => { e?.stopPropagation(); onDelete(task.id); }}
-                    onCancel={(e) => e?.stopPropagation()}
-                    okText="Sí"
-                    cancelText="No"
-                  >
-                    <Button type="text" danger icon={<DeleteOutlined />} size="small" onClick={(e) => e.stopPropagation()} style={{ padding: 0, height: 'auto' }} />
-                  </Popconfirm>
-                )}
+                <Space size={8}>
+                  {onArchive && task.status === 'done' && (
+                    <Popconfirm
+                      title="¿Archivar esta tarea?"
+                      onConfirm={(e) => { e?.stopPropagation(); onArchive(task.id); }}
+                      onCancel={(e) => e?.stopPropagation()}
+                      okText="Sí"
+                      cancelText="No"
+                    >
+                      <Button type="text" icon={<InboxOutlined />} size="small" onClick={(e) => e.stopPropagation()} style={{ padding: 0, height: 'auto', color: '#1890ff' }} />
+                    </Popconfirm>
+                  )}
+                  {onDelete && (
+                    <Popconfirm
+                      title="¿Eliminar esta tarea?"
+                      onConfirm={(e) => { e?.stopPropagation(); onDelete(task.id); }}
+                      onCancel={(e) => e?.stopPropagation()}
+                      okText="Sí"
+                      cancelText="No"
+                    >
+                      <Button type="text" danger icon={<DeleteOutlined />} size="small" onClick={(e) => e.stopPropagation()} style={{ padding: 0, height: 'auto' }} />
+                    </Popconfirm>
+                  )}
+                </Space>
               </div>
 
               {task.description && (

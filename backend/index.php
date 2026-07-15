@@ -186,6 +186,8 @@ if ($path == '/login' && $method == 'POST') {
 
     if ($method == 'GET') {
         $projectId = isset($_GET['project_id']) ? intval($_GET['project_id']) : null;
+        $archived = isset($_GET['archived']) && $_GET['archived'] == '1' ? 1 : 0;
+        
         if (!$projectId) {
             http_response_code(400);
             echo json_encode(["message" => "Falta el id del proyecto."]);
@@ -197,7 +199,11 @@ if ($path == '/login' && $method == 'POST') {
             exit;
         }
         
-        $stmt = $pdo->prepare("SELECT * FROM tasks WHERE project_id = ? ORDER BY created_at DESC");
+        if ($archived) {
+            $stmt = $pdo->prepare("SELECT * FROM tasks WHERE project_id = ? AND is_archived = 1 ORDER BY created_at DESC");
+        } else {
+            $stmt = $pdo->prepare("SELECT * FROM tasks WHERE project_id = ? AND (is_archived = 0 OR is_archived IS NULL) ORDER BY created_at DESC");
+        }
         $stmt->execute([$projectId]);
         echo json_encode($stmt->fetchAll());
     } elseif ($method == 'POST') {
@@ -253,7 +259,7 @@ if ($path == '/login' && $method == 'POST') {
         
         $updates = [];
         $params = [];
-        $allowedFields = ['title', 'description', 'status', 'priority', 'assignee', 'labels'];
+        $allowedFields = ['title', 'description', 'status', 'priority', 'assignee', 'labels', 'is_archived'];
         
         foreach ($allowedFields as $field) {
             if (isset($data->$field)) {
